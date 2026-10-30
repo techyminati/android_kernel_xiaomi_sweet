@@ -1,5 +1,6 @@
 config ARM64
 	def_bool y
+	select MODULE_REL_CRCS if MODVERSIONS
 	select ACPI_CCA_REQUIRED if ACPI
 	select ACPI_GENERIC_GSI if ACPI
 	select ACPI_GTDT if ACPI

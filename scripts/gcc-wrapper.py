@@ -51,7 +51,7 @@ def interpret_warning(line):
     line = line.rstrip('\n')
     m = warning_re.match(line)
     if m and m.group(2) not in allowed_warnings:
-        print >> sys.stderr, "error, forbidden warning:", m.group(2)
+        print("error, forbidden warning:", m.group(2), file=sys.stderr)
 
         # If there is a warning, remove any object if it exists.
         if ofile:
@@ -76,17 +76,18 @@ def run_gcc():
     try:
         proc = subprocess.Popen(args, stderr=subprocess.PIPE)
         for line in proc.stderr:
-            print >> sys.stderr, line,
+            line = line.decode('utf-8', errors='replace')
+            print(line, end='', file=sys.stderr)
             interpret_warning(line)
 
         result = proc.wait()
     except OSError as e:
         result = e.errno
         if result == errno.ENOENT:
-            print >> sys.stderr, args[0] + ':',e.strerror
-            print >> sys.stderr, 'Is your PATH set correctly?'
+            print(args[0] + ':', e.strerror, file=sys.stderr)
+            print('Is your PATH set correctly?', file=sys.stderr)
         else:
-            print >> sys.stderr, ' '.join(args), str(e)
+            print(' '.join(args), str(e), file=sys.stderr)
 
     return result
 
